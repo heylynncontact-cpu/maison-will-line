@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La maison de Will et Line</title>
+<meta name="theme-color" content="#E7E9E4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : tableau de bord épuré. Fond gris-sauge, grandes cartes blanches, panneaux internes gris clair,
+   pilules discrètes. Desktop : 2 colonnes (vue d'ensemble | par pièce) puis la liste pleine largeur. Mobile : une colonne. */
+:root {
+  --bg: #E7E9E4;
+  --card: #FFFFFF;
+  --panel: #F4F5F2;
+  --panel-2: #ECEEEA;
+  --ink: #1F1D1A;
+  --ink-2: #4A4540;
+  --muted: #8A857E;
+  --line: #E3E4DF;
+  --sage: #A9C3A0;
+  --sage-soft: #E3ECDD;
+  --sage-ink: #4E7247;
+  --brown: #7A5A43;
+  --brown-soft: #EFE5DA;
+  --dark: #25211D;
+  --on-dark: #FFFFFF;
+  --danger: #B5523B;
+  --danger-soft: #F6E3DD;
+  --shadow: 0 1px 2px rgba(31, 29, 26, .04);
+  --shadow-pop: 0 10px 30px rgba(31, 29, 26, .14);
+  --font: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141412; --card: #1E1D1B; --panel: #262522; --panel-2: #2E2C29;
+    --ink: #F2EFEA; --ink-2: #CFC9C1; --muted: #9A948C; --line: #33312D;
+    --sage: #8FAE86; --sage-soft: #2A3427; --sage-ink: #A9CC9F;
+    --brown: #D4B190; --brown-soft: #3A2F26; --dark: #F2EFEA; --on-dark: #1A1917;
+    --danger: #E58A72; --danger-soft: #3A2620;
+    --shadow: 0 1px 2px rgba(0,0,0,.3); --shadow-pop: 0 10px 30px rgba(0,0,0,.5);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141412; --card: #1E1D1B; --panel: #262522; --panel-2: #2E2C29;
+  --ink: #F2EFEA; --ink-2: #CFC9C1; --muted: #9A948C; --line: #33312D;
+  --sage: #8FAE86; --sage-soft: #2A3427; --sage-ink: #A9CC9F;
+  --brown: #D4B190; --brown-soft: #3A2F26; --dark: #F2EFEA; --on-dark: #1A1917;
+  --danger: #E58A72; --danger-soft: #3A2620;
+  --shadow: 0 1px 2px rgba(0,0,0,.3); --shadow-pop: 0 10px 30px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 15px; line-height: 1.45; letter-spacing: -.005em;
+  padding-inline: 12px;
+  padding-block: calc(env(safe-area-inset-top, 0px) + 12px) calc(env(safe-area-inset-bottom, 0px) + 32px);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
+:focus-visible { outline: 2px solid var(--sage-ink); outline-offset: 2px; }
+
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+
+/* Barre du haut */
+.top { display: flex; align-items: center; gap: 12px; padding: 8px 6px 4px; flex-wrap: wrap; }
+.mono { width: 34px; height: 34px; border-radius: 10px; background: var(--dark); color: var(--on-dark); display: grid; place-items: center; font-weight: 700; font-size: .78rem; letter-spacing: .02em; flex: none; }
+.top h1 { font-size: 1.15rem; font-weight: 700; margin: 0; letter-spacing: -.02em; flex: 1 1 200px; min-width: 0; }
+@media (max-width: 560px) { .top-right { width: 100%; justify-content: space-between; } }
+.top-right { display: flex; gap: 8px; align-items: center; }
+.who { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; background: var(--card); border-radius: 999px; padding: 4px 4px 4px 14px; font-size: .85rem; font-weight: 600; box-shadow: var(--shadow); }
+.who button { border: 0; background: var(--panel); border-radius: 999px; padding: 6px 12px; font-size: .8rem; cursor: pointer; color: var(--muted); font-weight: 600; }
+
+.demo-banner { background: var(--card); border-radius: 14px; padding: 10px 16px; font-size: .85rem; color: var(--ink-2); display: flex; gap: 10px; align-items: center; }
+.demo-banner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brown); flex: none; }
+
+/* Cartes */
+.layout { display: grid; gap: 10px; grid-template-columns: 300px minmax(0, 1fr); align-items: start; }
+.side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+@media (min-width: 821px) { .side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 10px); } }
+@media (max-width: 820px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.card.compact { padding: 10px; border-radius: 20px; }
+.stats.one { grid-template-columns: minmax(0, 1fr); }
+.grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+@media (max-width: 820px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--card); border-radius: 22px; padding: 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.card-head { display: flex; align-items: center; gap: 10px; justify-content: space-between; flex-wrap: wrap; }
+.card-head h2 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+.card-head h2 svg { width: 18px; height: 18px; color: var(--muted); }
+.panel { background: var(--panel); border-radius: 16px; padding: 16px; }
+
+/* Vue d'ensemble */
+.big { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.big .n { font-size: clamp(2.2rem, 8vw, 3rem); font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.big .l { color: var(--muted); font-size: .9rem; margin-top: 8px; }
+.big .delta { font-size: .9rem; color: var(--muted); }
+.big .delta b { color: var(--sage-ink); font-weight: 700; }
+.meter { position: relative; height: 52px; border-radius: 14px; background: var(--panel); overflow: hidden; }
+.meter .fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--brown-soft), var(--sage)); border-radius: 14px 0 0 14px; transition: width .6s ease; }
+.meter .mark { position: absolute; top: 8px; bottom: 8px; width: 3px; border-radius: 2px; background: var(--dark); transform: translateX(-1px); }
+.meter .lab { position: absolute; top: 50%; transform: translateY(-50%); font-size: .82rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.meter .lab.l { left: 14px; } .meter .lab.r { right: 14px; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.stat { background: var(--panel); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.stat .k { font-size: .78rem; color: var(--muted); font-weight: 600; }
+.stat .v { font-size: 1.5rem; font-weight: 600; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+
+/* Par pièce */
+.rooms { display: flex; flex-direction: column; gap: 2px; }
+.room {
+  display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  border: 0; background: transparent; text-align: left; padding: 8px; border-radius: 12px; cursor: pointer; width: 100%;
+}
+.room:hover { background: var(--panel); }
+.room[aria-pressed="true"] { background: var(--panel); box-shadow: inset 0 0 0 1.5px var(--line); }
+.tile { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; }
+.tile svg { width: 19px; height: 19px; }
+.tile.t0 { background: var(--sage-soft); color: var(--sage-ink); }
+.tile.t1 { background: var(--brown-soft); color: var(--brown); }
+.tile.t2 { background: var(--panel-2); color: var(--ink-2); }
+.room .rn { font-weight: 600; font-size: .95rem; }
+.room .rs { font-size: .8rem; color: var(--muted); }
+.room .rv { font-weight: 600; font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--muted); background: var(--panel); border-radius: 999px; min-width: 28px; padding: 2px 8px; text-align: center; }
+.room[aria-pressed="true"] .rv { background: var(--card); }
+
+/* Liste */
+.seg { display: inline-flex; background: var(--panel); border-radius: 999px; padding: 4px; gap: 2px; }
+.seg button { border: 0; background: transparent; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: .85rem; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(31,29,26,.12); }
+.toolbar { display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: -6px; }
+.filter-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--panel); border: 0; border-radius: 999px; padding: 7px 10px 7px 14px; font-size: .82rem; font-weight: 600; cursor: pointer; color: var(--ink-2); }
+.filter-pill svg { width: 14px; height: 14px; }
+
+.rows { display: flex; flex-direction: column; }
+.row {
+  display: grid; align-items: center; gap: 4px 14px; padding: 14px 4px;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-areas: "thumb info info" "thumb tags tags" "thumb price action";
+  row-gap: 8px;
+  border-top: 1px solid var(--line);
+}
+.row:first-child { border-top: 0; }
+.thumb { grid-area: thumb; width: 48px; height: 48px; border-radius: 12px; overflow: hidden; background: var(--panel); display: grid; place-items: center; color: var(--muted); align-self: start; }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb svg { width: 20px; height: 20px; }
+.info { grid-area: info; min-width: 0; }
+.info h3 { margin: 0; font-size: .98rem; font-weight: 600; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.info .sub { font-size: .82rem; color: var(--muted); overflow-wrap: anywhere; }
+.info .sub a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line); }
+.info .sub a:hover { color: var(--ink); }
+.tags { grid-area: tags; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: var(--panel); color: var(--ink-2); }
+.pill svg { width: 13px; height: 13px; }
+.pill.prio { background: var(--brown-soft); color: var(--brown); }
+.pill.done { background: var(--sage-soft); color: var(--sage-ink); }
+.price { grid-area: price; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1rem; }
+.action { grid-area: action; display: flex; gap: 6px; justify-content: flex-end; align-items: center; }
+@media (min-width: 1000px) {
+  .row { grid-template-columns: 48px minmax(0, 1fr) auto 96px auto; grid-template-areas: "thumb info tags price action"; }
+  .price { text-align: right; }
+  .thumb { align-self: center; }
+}
+
+/* Boutons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; padding: 9px 16px; min-height: 38px; font-weight: 600; font-size: .86rem; cursor: pointer; white-space: nowrap; transition: transform .1s ease, opacity .2s; }
+.btn:active { transform: scale(.97); }
+.btn svg { width: 15px; height: 15px; }
+.btn.dark { background: var(--dark); color: var(--on-dark); box-shadow: 0 6px 16px rgba(31,29,26,.18); }
+.btn.line { background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--line); }
+.btn.soft { background: var(--panel); color: var(--ink-2); }
+.btn.danger { background: var(--danger); color: #fff; }
+.btn.block { width: 100%; min-height: 46px; }
+.btn[disabled] { opacity: .5; cursor: wait; }
+.icon-btn { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--panel); color: var(--muted); display: inline-grid; place-items: center; cursor: pointer; flex: none; }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* Switch */
+.switch { display: inline-flex; align-items: center; gap: 12px; background: var(--panel); border-radius: 999px; padding: 6px 6px 6px 16px; font-size: .86rem; font-weight: 600; color: var(--ink-2); cursor: pointer; align-self: flex-start; }
+.switch input { appearance: none; -webkit-appearance: none; width: 40px; height: 24px; border-radius: 999px; background: var(--line); position: relative; margin: 0; cursor: pointer; transition: background .2s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s; }
+.switch input:checked { background: var(--sage-ink); }
+.switch input:checked::after { transform: translateX(16px); }
+
+.empty { padding: 36px 16px; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.empty p { margin: 0; max-width: 36ch; }
+
+/* Formulaires */
+.gate { max-width: 440px; width: 100%; margin: 6vh auto 0; }
+.gate .lead { margin: 0; color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 600; font-size: .84rem; color: var(--ink-2); }
+.input { width: 100%; border: 0; background: var(--panel); border-radius: 12px; padding: 12px 14px; font-size: 1rem; min-height: 46px; box-shadow: inset 0 0 0 1.5px transparent; transition: box-shadow .15s, background .15s; }
+.input:focus { outline: none; box-shadow: inset 0 0 0 1.5px var(--sage-ink); background: var(--card); }
+.input.code { text-transform: uppercase; letter-spacing: .2em; font-weight: 700; }
+textarea.input { min-height: 80px; resize: vertical; }
+.form-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.form-grid .full { grid-column: 1 / -1; }
+@media (max-width: 460px) { .form-grid { grid-template-columns: 1fr; } }
+.check { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: .9rem; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--sage-ink); }
+.error { color: var(--danger); font-weight: 600; font-size: .86rem; margin: 0; }
+.linkish { background: none; border: 0; padding: 0; color: var(--muted); cursor: pointer; font-size: .86rem; font-weight: 600; align-self: center; }
+.linkish:hover { color: var(--ink); }
+
+/* Codes */
+.codes { display: flex; flex-direction: column; gap: 6px; }
+.code-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; background: var(--panel); border-radius: 14px; padding: 10px 10px 10px 16px; }
+.code-row .cv { font-weight: 700; letter-spacing: .16em; font-variant-numeric: tabular-nums; }
+.code-row .cl { color: var(--muted); font-size: .86rem; overflow-wrap: anywhere; }
+.code-row .tools { display: flex; gap: 6px; }
+.code-row .icon-btn { background: var(--card); }
+.share { font-size: .84rem; color: var(--muted); overflow-wrap: anywhere; }
+.share b { color: var(--ink-2); font-weight: 600; }
+
+/* Feuilles */
+.scrim { position: fixed; inset: 0; background: rgba(20, 18, 16, .4); z-index: 40; display: flex; align-items: flex-end; justify-content: center; padding: 0; }
+.sheet { background: var(--card); width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; border-radius: 22px 22px 0 0; padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 20px); display: flex; flex-direction: column; gap: 16px; animation: up .2s ease; box-shadow: var(--shadow-pop); }
+.sheet h2 { margin: 0; font-size: 1.15rem; font-weight: 700; letter-spacing: -.02em; text-wrap: balance; }
+.sheet p { margin: 0; }
+.sheet .btns { display: flex; gap: 8px; }
+.sheet .btns .btn { flex: 1; min-height: 44px; }
+.menu { display: flex; flex-direction: column; gap: 6px; }
+.menu button { display: flex; align-items: center; gap: 12px; border: 0; background: var(--panel); border-radius: 12px; padding: 14px 16px; font-weight: 600; cursor: pointer; text-align: left; }
+.menu button svg { width: 18px; height: 18px; color: var(--muted); }
+.menu button.danger { color: var(--danger); background: var(--danger-soft); }
+.menu button.danger svg { color: var(--danger); }
+@media (min-width: 640px) { .scrim { align-items: center; padding: 16px; } .sheet { border-radius: 22px; } }
+@keyframes up { from { transform: translateY(16px); opacity: .5; } to { transform: none; opacity: 1; } }
+
+.toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translateX(-50%); background: var(--dark); color: var(--on-dark); padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: .88rem; z-index: 60; box-shadow: var(--shadow-pop); max-width: calc(100% - 32px); text-align: center; }
+.loading { text-align: center; color: var(--muted); padding: 60px 0; }
+
+@media (max-width: 480px) {
+  .card { padding: 18px 16px; border-radius: 20px; }
+  .stats { gap: 6px; }
+  .stat { padding: 12px; }
+  .stat .v { font-size: 1.3rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="mono" aria-hidden="true">W&amp;L</div>
+    <h1>La maison de Will et Line</h1>
+    <div class="top-right">
+      <div class="seg" id="adminSeg" hidden>
+        <button type="button" data-act="view" data-view="list" id="segList">Liste</button>
+        <button type="button" data-act="view" data-view="codes" id="segCodes">Codes</button>
+      </div>
+      <div class="who" id="who" hidden><span id="whoName"></span><button type="button" data-act="logout">Sortir</button></div>
+    </div>
+  </header>
+
+  <div class="demo-banner" id="demoBanner" hidden><span class="dot"></span><span><b>Mode démo</b> · rien n'est enregistré. Code invité : <b>MAISON</b>. Connexion Line / Will : n'importe quelle date (JJMMAAAA) et mot de passe.</span></div>
+
+  <main id="app"><p class="loading">Chargement…</p></main>
+</div>
+
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script type="module">
+/* ============================================================
+   CONFIGURATION FIREBASE
+   Colle ici la config de ton projet (console Firebase > Paramètres du projet > Tes applis > Web).
+   Tant que apiKey est vide, le site tourne en MODE DÉMO.
+   ============================================================ */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDoVxkBCPhwKQCF6Cr3WYED3twzWwCZVSg",
+  authDomain: "maison-will-line.firebaseapp.com",
+  projectId: "maison-will-line",
+  storageBucket: "maison-will-line.firebasestorage.app",
+  messagingSenderId: "438528946905",
+  appId: "1:438528946905:web:0a736e294781508e11c4c8"
+};
+
+/* Connexion Line / Will : on tape sa date de naissance (JJMMAAAA) + mot de passe.
+   La date est convertie en empreinte (SHA-256) pour ne pas apparaître en clair dans le code. */
+const ACCOUNTS = {
+  "0043835f69191905585cdae76595476c44a28d9032b58c27e98d69c728b791af": "line@maison.fr",
+  "d0ea5b1d067128c566bd484dbb7ea84c3f7190de8fea2cfeab8239e77a84d01e": "will@maison.fr"
+};
+async function loginEmail(id) {
+  const d = String(id).replace(/\D/g, "");
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(d));
+  const hex = [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return ACCOUNTS[hex] || null;
+}
+
+const ROOMS = ["Salon", "Cuisine", "Salle à manger", "Chambre", "Salle de bain", "Bureau", "Entrée", "Buanderie", "Jardin & extérieur", "Déco", "Autre"];
+
+/* ---------- utilitaires ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const euro = new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 2 });
+const fmtPrice = (p) => (p || p === 0) && !isNaN(p) && p !== "" ? euro.format(Number(p)) : "";
+const shopOf = (url) => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return ""; } };
+const safeUrl = (url) => { try { const u = new URL(url); return /^https?:$/.test(u.protocol) ? u.href : ""; } catch { return ""; } };
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+                set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+const randomCode = () => { const a = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s = ""; for (let i = 0; i < 6; i++) s += a[Math.floor(Math.random() * a.length)]; return s; };
+const cleanCode = (c) => String(c || "").toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 24);
+
+/* ============================================================
+   BACKEND DÉMO (en mémoire)
+   ============================================================ */
+function createDemoBackend() {
+  let id = 100;
+  const now = Date.now();
+  let items = [
+    { name: "Canapé 3 places en velours côtelé", room: "Salon", price: 749, link: "https://www.maisonsdumonde.com/", note: "Exemple · couleur sauge ou caramel", fav: true },
+    { name: "Plaid en gaze de coton", room: "Salon", price: 39.9, link: "https://www.laredoute.fr/", note: "", fav: false },
+    { name: "Cocotte en fonte 24 cm", room: "Cuisine", price: 129, link: "https://www.amazon.fr/", note: "Exemple · couleur vert ou crème", fav: true },
+    { name: "Set de 4 bols en grès", room: "Cuisine", price: 32, link: "https://www.ikea.com/fr/fr/", note: "", fav: false },
+    { name: "Linge de lit en lin lavé 160×200", room: "Chambre", price: 119, link: "https://www.lacanopee.com/", note: "Exemple", fav: false },
+    { name: "Lampe à poser champignon", room: "Chambre", price: 59, link: "https://www.ikea.com/fr/fr/", note: "", fav: false },
+    { name: "Serviettes de bain en nid d'abeille", room: "Salle de bain", price: 45, link: "https://www.zarahome.com/", note: "", fav: false },
+    { name: "Olivier en pot (1,20 m)", room: "Jardin & extérieur", price: 89, link: "https://www.truffaut.com/", note: "Exemple", fav: false },
+  ].map((it, i) => ({ id: "d" + i, image: "", purchased: false, purchasedBy: null, purchasedByUid: null, purchasedAt: null, createdAt: now - i * 1000, ...it }));
+  items[3] = { ...items[3], purchased: true, purchasedBy: "Carolina", purchasedByUid: "g-demo", purchasedAt: now };
+  let codes = [{ id: "MAISON", label: "Démo · famille & amis", createdAt: now }];
+  let me = null, authCb = () => {}, itemsCb = null, codesCb = null;
+  const emitItems = () => itemsCb && itemsCb(items.map((x) => ({ ...x })));
+  const emitCodes = () => codesCb && codesCb(codes.map((x) => ({ ...x })));
+  const wait = (ms = 250) => new Promise((r) => setTimeout(r, ms));
+  return {
+    mode: "demo",
+    onAuth(cb) { authCb = cb; setTimeout(() => cb(me), 50); },
+    async signInAdmin(id) { await wait(); const email = await loginEmail(id); if (!email) throw new Error("bad"); me = { role: "admin", uid: "admin-" + email, name: email.startsWith("will") ? "Will" : "Line" }; authCb(me); },
+    async joinWithCode(code, name) {
+      await wait();
+      if (!codes.some((c) => c.id === code)) throw new Error("bad-code");
+      me = { role: "guest", uid: "g-" + Math.random().toString(36).slice(2), name }; authCb(me);
+    },
+    async signOut() { me = null; itemsCb = codesCb = null; authCb(null); },
+    onItems(cb) { itemsCb = cb; emitItems(); return () => { itemsCb = null; }; },
+    async addItem(data) { await wait(150); items.unshift({ ...data, id: "d" + id++, purchased: false, purchasedBy: null, purchasedByUid: null, purchasedAt: null, createdAt: Date.now() }); emitItems(); },
+    async updateItem(iid, data) { await wait(150); items = items.map((x) => (x.id === iid ? { ...x, ...data } : x)); emitItems(); },
+    async deleteItem(iid) { await wait(150); items = items.filter((x) => x.id !== iid); emitItems(); },
+    async markPurchased(iid, name) { await wait(150); items = items.map((x) => (x.id === iid ? { ...x, purchased: true, purchasedBy: name, purchasedByUid: me.uid, purchasedAt: Date.now() } : x)); emitItems(); },
+    async unmark(iid) { await wait(150); items = items.map((x) => (x.id === iid ? { ...x, purchased: false, purchasedBy: null, purchasedByUid: null, purchasedAt: null } : x)); emitItems(); },
+    onCodes(cb) { codesCb = cb; emitCodes(); return () => { codesCb = null; }; },
+    async addCode(code, label) { await wait(150); if (codes.some((c) => c.id === code)) throw new Error("exists"); codes.push({ id: code, label, createdAt: Date.now() }); emitCodes(); },
+    async deleteCode(code) { await wait(150); codes = codes.filter((c) => c.id !== code); emitCodes(); }
+  };
+}
+
+/* ============================================================
+   BACKEND FIREBASE (Auth + Firestore)
+   ============================================================ */
+async function createFirebaseBackend(cfg) {
+  const base = "https://www.gstatic.com/firebasejs/10.12.2/";
+  const [appM, authM, fs] = await Promise.all([
+    import(base + "firebase-app.js"), import(base + "firebase-auth.js"), import(base + "firebase-firestore.js")
+  ]);
+  const app = appM.initializeApp(cfg);
+  const auth = authM.getAuth(app);
+  const db = fs.getFirestore(app);
+  const { doc, getDoc, setDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp, query, orderBy } = fs;
+  let authCb = () => {};
+  let joiningUid = null;
+  const ms = (t) => (t && t.toMillis ? t.toMillis() : 0);
+
+  return {
+    mode: "firebase",
+    onAuth(cb) {
+      authCb = cb;
+      authM.onAuthStateChanged(auth, async (u) => {
+        if (!u) return cb(null);
+        try {
+          if (u.isAnonymous) {
+            const s = await getDoc(doc(db, "guests", u.uid));
+            if (s.exists()) return cb({ role: "guest", uid: u.uid, name: s.data().name });
+            if (joiningUid === u.uid) return; // inscription en cours
+            return cb(null);
+          }
+          const a = await getDoc(doc(db, "admins", u.uid));
+          if (a.exists()) return cb({ role: "admin", uid: u.uid, name: a.data().name || (u.email || "").split("@")[0] });
+          return cb({ role: "none", uid: u.uid, email: u.email });
+        } catch (e) { console.error(e); cb({ role: "error", error: e }); }
+      });
+    },
+    async signInAdmin(id, pw) { const email = await loginEmail(id); if (!email) throw new Error("unknown"); await authM.signInWithEmailAndPassword(auth, email, pw); },
+    async joinWithCode(code, name) {
+      if (auth.currentUser && !auth.currentUser.isAnonymous) await authM.signOut(auth);
+      if (!auth.currentUser) await authM.signInAnonymously(auth);
+      const uid = auth.currentUser.uid;
+      joiningUid = uid;
+      try {
+        await setDoc(doc(db, "guests", uid), { code, name, joinedAt: serverTimestamp() });
+      } catch (e) { joiningUid = null; throw new Error("bad-code"); }
+      authCb({ role: "guest", uid, name });
+    },
+    async signOut() { joiningUid = null; await authM.signOut(auth); },
+    onItems(cb, onErr) {
+      return onSnapshot(query(collection(db, "items"), orderBy("createdAt", "desc")),
+        (snap) => cb(snap.docs.map((d) => { const x = d.data(); return { id: d.id, ...x, createdAt: ms(x.createdAt), purchasedAt: ms(x.purchasedAt) }; })),
+        (e) => { console.error(e); onErr && onErr(e); });
+    },
+    async addItem(data) {
+      await addDoc(collection(db, "items"), { ...data, purchased: false, purchasedBy: null, purchasedByUid: null, purchasedAt: null, createdAt: serverTimestamp() });
+    },
+    async updateItem(id, data) { await updateDoc(doc(db, "items", id), data); },
+    async deleteItem(id) { await deleteDoc(doc(db, "items", id)); },
+    async markPurchased(id, name) {
+      await updateDoc(doc(db, "items", id), { purchased: true, purchasedBy: name, purchasedByUid: auth.currentUser.uid, purchasedAt: serverTimestamp() });
+    },
+    async unmark(id) { await updateDoc(doc(db, "items", id), { purchased: false, purchasedBy: null, purchasedByUid: null, purchasedAt: null }); },
+    onCodes(cb) {
+      return onSnapshot(collection(db, "codes"), (snap) => cb(snap.docs.map((d) => ({ id: d.id, ...d.data(), createdAt: ms(d.data().createdAt) }))), (e) => console.error(e));
+    },
+    async addCode(code, label) {
+      const ref = doc(db, "codes", code);
+      if ((await getDoc(ref)).exists()) throw new Error("exists");
+      await setDoc(ref, { label, createdAt: serverTimestamp() });
+    },
+    async deleteCode(code) { await deleteDoc(doc(db, "codes", code)); }
+  };
+}
+
+
+const sv = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON = {
+  img: sv('<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 9"/>'),
+  more: sv('<circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/>'),
+  edit: sv('<path d="M4 20h4L19 9l-4-4L4 16z"/>'),
+  trash: sv('<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'),
+  check: sv('<path d="m5 12 5 5 9-10"/>'),
+  plus: sv('<path d="M12 5v14M5 12h14"/>'),
+  x: sv('<path d="M6 6l12 12M18 6 6 18"/>'),
+  copy: sv('<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>'),
+  ext: sv('<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>'),
+  list: sv('<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>'),
+  grid: sv('<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'),
+  chart: sv('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  key: sv('<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3"/>')
+};
+const ROOM_ICON = {
+  "Salon": sv('<path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3"/><path d="M3 11h18v5H3zM5 16v2M19 16v2"/>'),
+  "Cuisine": sv('<path d="M4 10h16v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 4v3M12 4v3M16 4v3"/>'),
+  "Salle à manger": sv('<path d="M3 9h18M5 9v11M19 9v11M8 9V5M16 9V5"/>'),
+  "Chambre": sv('<path d="M3 18V8M21 18v-5a3 3 0 0 0-3-3H10v8M3 14h18"/><circle cx="6.5" cy="11" r="1.5"/>'),
+  "Salle de bain": sv('<path d="M3 12h18v2a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5zM6 12V6a2 2 0 0 1 4 0"/>'),
+  "Bureau": sv('<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>'),
+  "Entrée": sv('<path d="M6 20V4h12v16M3 20h18"/><circle cx="14.5" cy="12" r=".8" fill="currentColor"/>'),
+  "Buanderie": sv('<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6.5h.01"/>'),
+  "Jardin & extérieur": sv('<path d="M12 21V11M12 11c0-4 3-7 7-7 0 4-3 7-7 7zM12 14c0-3-2-5-6-5 0 3 2 5 6 5z"/>'),
+  "Déco": sv('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m4 16 5-5 4 4 3-3 4 4"/>')
+};
+const roomIcon = (r) => ROOM_ICON[r] || sv('<path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>');
+const shortEuro = (n) => euro.format(n).replace(/,00(?=\s?€)/, "");
+
+/* ============================================================
+   ÉTAT + RENDU
+   ============================================================ */
+const S = {
+  api: null, me: null, items: [], codes: [], loaded: false,
+  room: store.get("room", "Tout"), view: "list", tab: "open", gate: "guest",
+  unsubs: []
+};
+const app = $("#app");
+
+function stopSubs() { S.unsubs.forEach((u) => { try { u && u(); } catch {} }); S.unsubs = []; }
+function startSubs() {
+  stopSubs();
+  S.loaded = false;
+  S.unsubs.push(S.api.onItems((items) => { S.items = items; S.loaded = true; if (S.view === "list") render(); }, async (e) => {
+    if (e && e.code === "permission-denied" && S.me?.role === "guest") {
+      toast("Ce code n'est plus actif. Demande un nouveau code à Line ou Will.");
+      await S.api.signOut();
+    }
+  }));
+  if (S.me.role === "admin") S.unsubs.push(S.api.onCodes((codes) => { S.codes = codes.sort((a, b) => a.createdAt - b.createdAt); if (S.view === "codes") render(); }));
+}
+
+function render() {
+  const me = S.me, isIn = me && ["guest", "admin"].includes(me.role), admin = me?.role === "admin";
+  $("#who").hidden = !isIn;
+  if (isIn) $("#whoName").textContent = me.name;
+  $("#adminSeg").hidden = !admin;
+  $("#segList").setAttribute("aria-pressed", S.view === "list");
+  $("#segCodes").setAttribute("aria-pressed", S.view === "codes");
+  if (!me) return renderGate();
+  if (me.role === "none") return renderNoAdmin();
+  if (me.role === "error") { app.innerHTML = `<div class="card gate"><p class="error">Connexion impossible pour le moment. Vérifie ta connexion internet puis recharge la page.</p></div>`; return; }
+  if (admin && S.view === "codes") return renderCodes();
+  renderList();
+}
+
+/* ---------- Connexion ---------- */
+function renderGate() {
+  if (S.gate === "admin") {
+    app.innerHTML = `
+      <form class="card gate" id="adminForm" novalidate>
+        <div class="card-head"><h2>Connexion</h2></div>
+        <p class="lead">Espace Line et Will, pour ajouter des articles et gérer les codes.</p>
+        <div class="field"><label for="adminId">Date de naissance</label><input class="input" id="adminId" inputmode="numeric" autocomplete="username" placeholder="JJMMAAAA" maxlength="10" required></div>
+        <div class="field"><label for="adminPw">Mot de passe</label><input class="input" id="adminPw" type="password" autocomplete="current-password" required></div>
+        <p class="error" id="gateErr" hidden></p>
+        <button class="btn dark block" type="submit">Se connecter</button>
+        <button class="linkish" type="button" data-act="gate" data-gate="guest">J'ai un code invité</button>
+      </form>`;
+    $("#adminForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector("[type=submit]"), err = $("#gateErr");
+      err.hidden = true; btn.disabled = true;
+      try { await S.api.signInAdmin($("#adminId").value.trim(), $("#adminPw").value); }
+      catch { err.textContent = "Date de naissance ou mot de passe incorrect."; err.hidden = false; }
+      finally { btn.disabled = false; }
+    });
+    return;
+  }
+  app.innerHTML = `
+    <form class="card gate" id="guestForm" novalidate>
+      <div class="card-head"><h2>Liste de souhaits</h2></div>
+      <p class="lead">Entre le code reçu de Line ou Will.</p>
+      <div class="field"><label for="guestCode">Code d'accès</label><input class="input code" id="guestCode" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="24" required></div>
+      <div class="field"><label for="guestName">Prénom</label><input class="input" id="guestName" autocomplete="given-name" maxlength="40" required></div>
+      <p class="error" id="gateErr" hidden></p>
+      <button class="btn dark block" type="submit">Accéder à la liste</button>
+      <button class="linkish" type="button" data-act="gate" data-gate="admin">Connexion Line / Will</button>
+    </form>`;
+  const saved = store.get("guestName", "");
+  if (saved) $("#guestName").value = saved;
+  $("#guestForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = cleanCode($("#guestCode").value), name = $("#guestName").value.trim().slice(0, 40);
+    const err = $("#gateErr"), btn = e.target.querySelector("[type=submit]");
+    err.hidden = true;
+    if (!code) { err.textContent = "Entre le code d'accès."; err.hidden = false; return; }
+    if (!name) { err.textContent = "Entre ton prénom."; err.hidden = false; return; }
+    btn.disabled = true;
+    try { store.set("guestName", name); await S.api.joinWithCode(code, name); }
+    catch (ex) { err.textContent = ex.message === "bad-code" ? "Ce code ne fonctionne pas. Vérifie l'orthographe ou redemande-le." : "Connexion impossible. Vérifie ta connexion internet."; err.hidden = false; }
+    finally { btn.disabled = false; }
+  });
+}
+
+function renderNoAdmin() {
+  app.innerHTML = `<div class="card gate">
+    <div class="card-head"><h2>Compte non autorisé</h2></div>
+    <p class="lead">Tu es connecté·e avec <b>${esc(S.me.email)}</b>, mais ce compte n'est pas encore autorisé. Ajoute-le dans la collection <b>admins</b> de Firestore (voir le guide), puis recharge la page.</p>
+    <p class="lead">Identifiant à copier : <b>${esc(S.me.uid)}</b></p>
+    <button class="btn line" data-act="logout">Se déconnecter</button></div>`;
+}
+
+/* ---------- Liste ---------- */
+const roomOf = (x) => x.room || "Autre";
+const sortRooms = (a, b) => (ROOMS.indexOf(a) + 1 || 99) - (ROOMS.indexOf(b) + 1 || 99) || a.localeCompare(b);
+
+function renderList() {
+  if (!S.loaded) { app.innerHTML = `<p class="loading">Chargement…</p>`; return; }
+  const admin = S.me.role === "admin";
+  // Line et Will ne voient jamais ce qui a été offert : pour eux, la liste contient tout, sans statut.
+  if (admin) S.tab = "open";
+  const all = S.items, open = all.filter((x) => !x.purchased), given = all.filter((x) => x.purchased);
+  const rooms = [...new Set(all.map(roomOf))].sort(sortRooms);
+  if (S.room !== "Tout" && !rooms.includes(S.room)) S.room = "Tout";
+
+  const pool = admin ? all : S.tab === "given" ? given : open;
+  const shown = pool.filter((x) => S.room === "Tout" || roomOf(x) === S.room)
+    .sort(!admin && S.tab === "given"
+      ? (a, b) => (b.purchasedAt || 0) - (a.purchasedAt || 0)
+      : (a, b) => (b.fav === true) - (a.fav === true) || (b.createdAt || 0) - (a.createdAt || 0));
+
+  const overview = `
+    <section class="card compact" aria-label="Vue d'ensemble">
+      <div class="stats ${admin ? "one" : ""}">
+        ${admin
+          ? `<div class="stat"><span class="k">Articles dans la liste</span><span class="v">${all.length}</span></div>`
+          : `<div class="stat"><span class="k">À offrir</span><span class="v">${open.length}</span></div>
+             <div class="stat"><span class="k">Offerts</span><span class="v">${given.length}</span></div>`}
+      </div>
+    </section>`;
+
+  const roomRows = rooms.map((r, i) => {
+    const n = (admin ? all : open).filter((x) => roomOf(x) === r).length;
+    return `<button class="room" data-act="room" data-room="${esc(r)}" aria-pressed="${S.room === r}">
+      <span class="tile t${i % 3}">${roomIcon(r)}</span>
+      <span class="rn">${esc(r)}</span>
+      <span class="rv">${n}</span></button>`;
+  }).join("");
+  const byRoom = `
+    <section class="card" aria-label="Par pièce">
+      <div class="card-head"><h2>${ICON.grid}Par pièce</h2></div>
+      ${rooms.length ? `<div class="rooms">${roomRows}</div>` : `<p style="margin:0;color:var(--muted)">Les pièces apparaîtront ici dès le premier article.</p>`}
+    </section>`;
+
+  const emptyMsg = all.length === 0
+    ? (admin ? "Aucun article pour l'instant. Ajoute le premier." : "Aucun article pour l'instant.")
+    : !admin && S.tab === "given" ? "Rien n'a encore été offert."
+    : admin ? "Aucun article dans cette pièce." : (S.room === "Tout" ? "Tout a été offert. Merci !" : `Plus rien à offrir dans « ${esc(S.room)} ».`);
+
+  const toolbar = (!admin || S.room !== "Tout") ? `<div class="toolbar">
+      ${admin ? "" : `<div class="seg" role="group" aria-label="Filtre">
+        <button data-act="tab" data-tab="open" aria-pressed="${S.tab === "open"}">À offrir</button>
+        <button data-act="tab" data-tab="given" aria-pressed="${S.tab === "given"}">Offerts</button></div>`}
+      ${S.room !== "Tout" ? `<button class="filter-pill" data-act="room" data-room="Tout">Toutes les pièces ${ICON.x}</button>` : ""}
+    </div>` : "";
+
+  const listCard = `
+    <section class="card" aria-label="Articles">
+      <div class="card-head">
+        <h2>${ICON.list}${S.room === "Tout" ? "Articles" : esc(S.room)}</h2>
+        ${admin ? `<button class="btn dark" data-act="add">${ICON.plus}Ajouter</button>` : ""}
+      </div>
+      ${toolbar}
+      ${shown.length ? `<div class="rows">${shown.map((x) => row(x, admin)).join("")}</div>`
+        : `<div class="empty"><p>${emptyMsg}</p>${admin && !all.length ? `<button class="btn dark" data-act="add">${ICON.plus}Ajouter un article</button>` : ""}</div>`}
+    </section>`;
+
+  app.innerHTML = `<div class="layout"><aside class="side">${overview}${byRoom}</aside>${listCard}</div>`;
+}
+
+function row(x, admin) {
+  const link = safeUrl(x.link), img = safeUrl(x.image), shop = shopOf(link);
+  const subParts = [];
+  if (link) subParts.push(`<a href="${esc(link)}" target="_blank" rel="noopener noreferrer">${esc(shop || "Voir le produit")} ↗</a>`);
+  if (x.note) subParts.push(esc(x.note));
+  let action = "", tags = `<span class="pill">${esc(roomOf(x))}</span>`;
+  if (admin) {
+    if (x.fav) tags += `<span class="pill prio">Prioritaire</span>`;
+    action = `<button class="icon-btn" data-act="menu" data-id="${esc(x.id)}" aria-label="Options">${ICON.more}</button>`;
+  } else if (x.purchased) {
+    const mine = x.purchasedByUid === S.me.uid;
+    tags += `<span class="pill done">${ICON.check}${mine ? "Offert par toi" : `Offert par ${esc(x.purchasedBy || "quelqu'un")}`}</span>`;
+    if (mine) action = `<button class="btn soft" data-act="unmark" data-id="${esc(x.id)}">Annuler</button>`;
+  } else {
+    if (x.fav) tags += `<span class="pill prio">Prioritaire</span>`;
+    action = `<button class="btn line" data-act="buy" data-id="${esc(x.id)}">${ICON.check}Acheté</button>`;
+  }
+  return `<article class="row">
+    <div class="thumb">${img ? `<img src="${esc(img)}" alt="" loading="lazy" onerror="this.remove()">` : ICON.img}</div>
+    <div class="info"><h3>${esc(x.name)}</h3>${subParts.length ? `<div class="sub">${subParts.join(" · ")}</div>` : ""}</div>
+    <div class="tags">${tags}</div>
+    <div class="price">${fmtPrice(x.price) || "–"}</div>
+    <div class="action">${action}</div>
+  </article>`;
+}
+
+/* ---------- Codes ---------- */
+const siteUrl = () => location.href.split("#")[0].split("?")[0];
+function renderCodes() {
+  const rows = S.codes.map((c) => `
+    <div class="code-row">
+      <span class="cv">${esc(c.id)}</span>
+      <span class="cl">${esc(c.label || "Sans nom")}</span>
+      <span class="tools">
+        <button class="icon-btn" data-act="copycode" data-code="${esc(c.id)}" aria-label="Copier le message d'invitation">${ICON.copy}</button>
+        <button class="icon-btn" data-act="delcode" data-code="${esc(c.id)}" aria-label="Supprimer le code">${ICON.trash}</button>
+      </span>
+    </div>`).join("");
+  app.innerHTML = `
+    <div class="grid">
+      <section class="card">
+        <div class="card-head"><h2>${ICON.key}Codes invités</h2><span style="color:var(--muted);font-size:.85rem">${S.codes.length} actif${S.codes.length > 1 ? "s" : ""}</span></div>
+        <div class="codes">${rows || `<p style="margin:0;color:var(--muted)">Aucun code pour l'instant.</p>`}</div>
+        <p class="share">Supprimer un code coupe l'accès à ceux qui l'utilisent. Lien du site : <b>${esc(siteUrl())}</b></p>
+      </section>
+      <form class="card" id="codeForm" novalidate>
+        <div class="card-head"><h2>${ICON.plus}Nouveau code</h2></div>
+        <div class="form-grid">
+          <div class="field"><label for="newCode">Code</label><input class="input code" id="newCode" maxlength="24" value="${randomCode()}"></div>
+          <div class="field"><label for="newLabel">Pour qui ?</label><input class="input" id="newLabel" maxlength="40" placeholder="Famille, collègues…"></div>
+        </div>
+        <p class="error" id="codeErr" hidden></p>
+        <button class="btn dark block" type="submit">Créer le code</button>
+      </form>
+    </div>`;
+  $("#codeForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const code = cleanCode($("#newCode").value), label = $("#newLabel").value.trim(), err = $("#codeErr");
+    err.hidden = true;
+    if (code.length < 4) { err.textContent = "Le code doit faire au moins 4 caractères (lettres et chiffres)."; err.hidden = false; return; }
+    try { await S.api.addCode(code, label); toast(`Code ${code} créé`); render(); }
+    catch (ex) { err.textContent = ex.message === "exists" ? "Ce code existe déjà." : "Création impossible. Réessaie."; err.hidden = false; }
+  });
+}
+
+/* ---------- Feuilles ---------- */
+function openSheet(html, onMount) {
+  const root = $("#sheetRoot");
+  root.innerHTML = `<div class="scrim" data-act="scrim"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+  onMount && onMount(root.querySelector(".sheet"));
+  const first = root.querySelector(".sheet input, .sheet .menu button"); first && setTimeout(() => first.focus(), 60);
+}
+function closeSheet() { $("#sheetRoot").innerHTML = ""; }
+
+function itemSheet(item) {
+  const x = item || { name: "", room: S.room !== "Tout" ? S.room : "Salon", price: "", link: "", image: "", note: "", fav: false };
+  const roomOpts = ROOMS.map((r) => `<option value="${esc(r)}"></option>`).join("");
+  openSheet(`
+    <h2>${item ? "Modifier l'article" : "Nouvel article"}</h2>
+    <form id="itemForm" style="display:flex;flex-direction:column;gap:14px" novalidate>
+      <div class="field"><label for="fName">Nom</label><input class="input" id="fName" maxlength="120" value="${esc(x.name)}" required></div>
+      <div class="form-grid">
+        <div class="field"><label for="fRoom">Pièce</label><input class="input" id="fRoom" list="roomList" maxlength="40" value="${esc(x.room)}"><datalist id="roomList">${roomOpts}</datalist></div>
+        <div class="field"><label for="fPrice">Prix (€)</label><input class="input" id="fPrice" inputmode="decimal" value="${esc(x.price ?? "")}" placeholder="49,90"></div>
+        <div class="field full"><label for="fLink">Lien du produit</label><input class="input" id="fLink" type="url" inputmode="url" value="${esc(x.link)}" placeholder="https://…"></div>
+        <div class="field full"><label for="fImage">Lien de l'image (facultatif)</label><input class="input" id="fImage" type="url" inputmode="url" value="${esc(x.image)}" placeholder="Clic droit sur la photo > Copier l'adresse de l'image"></div>
+        <div class="field full"><label for="fNote">Précision (facultatif)</label><textarea class="input" id="fNote" maxlength="240" placeholder="Couleur, taille, référence…">${esc(x.note)}</textarea></div>
+      </div>
+      <label class="check"><input type="checkbox" id="fFav" ${x.fav ? "checked" : ""}> Prioritaire</label>
+      <p class="error" id="itemErr" hidden></p>
+      <div class="btns"><button class="btn soft" type="button" data-act="close">Annuler</button><button class="btn dark" type="submit">${item ? "Enregistrer" : "Ajouter"}</button></div>
+    </form>`, (sheet) => {
+    sheet.querySelector("#itemForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const err = $("#itemErr"); err.hidden = true;
+      const name = $("#fName").value.trim();
+      const priceRaw = $("#fPrice").value.replace(/\s|€/g, "").replace(",", ".");
+      const link = $("#fLink").value.trim(), image = $("#fImage").value.trim();
+      if (!name) { err.textContent = "Donne un nom à l'article."; err.hidden = false; return; }
+      if (priceRaw && isNaN(Number(priceRaw))) { err.textContent = "Le prix doit être un nombre, par exemple 49,90."; err.hidden = false; return; }
+      if (link && !safeUrl(link)) { err.textContent = "Le lien doit commencer par https://"; err.hidden = false; return; }
+      if (image && !safeUrl(image)) { err.textContent = "Le lien de l'image doit commencer par https://"; err.hidden = false; return; }
+      const data = { name, room: $("#fRoom").value.trim() || "Autre", price: priceRaw ? Math.round(Number(priceRaw) * 100) / 100 : null,
+        link: safeUrl(link), image: safeUrl(image), note: $("#fNote").value.trim(), fav: $("#fFav").checked };
+      const btn = e.target.querySelector("[type=submit]"); btn.disabled = true;
+      try {
+        if (item) await S.api.updateItem(item.id, data); else await S.api.addItem(data);
+        closeSheet(); toast(item ? "Article modifié" : "Article ajouté");
+      } catch (ex) { console.error(ex); err.textContent = "Enregistrement impossible. Réessaie."; err.hidden = false; btn.disabled = false; }
+    });
+  });
+}
+
+function menuSheet(item) {
+  openSheet(`
+    <h2>${esc(item.name)}</h2>
+    <div class="menu">
+      <button data-act="edit" data-id="${esc(item.id)}">${ICON.edit}Modifier</button>
+      <button class="danger" data-act="del" data-id="${esc(item.id)}">${ICON.trash}Supprimer</button>
+    </div>
+    <button class="btn soft block" data-act="close">Fermer</button>`);
+}
+
+function buySheet(item) {
+  openSheet(`
+    <h2>Marquer « ${esc(item.name)} » comme acheté ?</h2>
+    <p style="color:var(--muted)">L'article passera dans « Offerts » pour éviter les doublons. Tu pourras annuler.</p>
+    <div class="field"><label for="buyName">Ton prénom</label><input class="input" id="buyName" maxlength="40" value="${esc(S.me.name || "")}"></div>
+    <div class="btns"><button class="btn soft" data-act="close">Annuler</button><button class="btn dark" id="buyOk">Confirmer</button></div>`, (sheet) => {
+    sheet.querySelector("#buyOk").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      const name = sheet.querySelector("#buyName").value.trim() || S.me.name || "Quelqu'un";
+      try { await S.api.markPurchased(item.id, name.slice(0, 40)); closeSheet(); toast("C'est noté, merci !"); }
+      catch (ex) { console.error(ex); toast("Quelqu'un l'a peut-être déjà pris. Recharge la page."); e.target.disabled = false; }
+    });
+  });
+}
+
+function confirmSheet(title, text, okLabel, fn) {
+  openSheet(`<h2>${title}</h2><p style="color:var(--muted)">${text}</p>
+    <div class="btns"><button class="btn soft" data-act="close">Annuler</button><button class="btn danger" id="okBtn">${okLabel}</button></div>`, (sheet) => {
+    sheet.querySelector("#okBtn").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      try { await fn(); closeSheet(); } catch (ex) { console.error(ex); toast("Action impossible. Réessaie."); e.target.disabled = false; }
+    });
+  });
+}
+
+let toastT;
+function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 2600); }
+
+/* ---------- Actions ---------- */
+document.addEventListener("click", async (e) => {
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act, find = (id) => S.items.find((x) => x.id === id);
+  if (act === "scrim") { if (e.target === el) closeSheet(); return; }
+  if (act === "close") { closeSheet(); return; }
+  if (act === "gate") { S.gate = el.dataset.gate; render(); return; }
+  if (act === "logout") { stopSubs(); S.view = "list"; S.gate = "guest"; await S.api.signOut(); return; }
+  if (act === "room") { S.room = S.room === el.dataset.room ? "Tout" : el.dataset.room; store.set("room", S.room); render(); return; }
+  if (act === "tab") { S.tab = el.dataset.tab; render(); return; }
+  if (act === "view") { S.view = el.dataset.view; render(); window.scrollTo({ top: 0 }); return; }
+  if (act === "add") { itemSheet(null); return; }
+  if (act === "menu") { const it = find(el.dataset.id); it && menuSheet(it); return; }
+  if (act === "edit") { const it = find(el.dataset.id); it && itemSheet(it); return; }
+  if (act === "buy") { const it = find(el.dataset.id); it && buySheet(it); return; }
+  if (act === "del") { const it = find(el.dataset.id); it && confirmSheet("Supprimer cet article ?", `« ${esc(it.name)} » disparaîtra de la liste pour tout le monde.`, "Supprimer", () => S.api.deleteItem(it.id)); return; }
+  if (act === "unmark") { const it = find(el.dataset.id); if (it) { try { await S.api.unmark(it.id); toast("Remis dans la liste"); } catch { toast("Action impossible."); } } return; }
+  if (act === "delcode") { const c = el.dataset.code; confirmSheet(`Supprimer le code ${esc(c)} ?`, "Les personnes qui l'utilisent n'auront plus accès à la liste.", "Supprimer", () => S.api.deleteCode(c)); return; }
+  if (act === "copycode") {
+    const msg = `Salut ! Voici notre liste de souhaits pour la maison : ${siteUrl()}\nCode d'accès : ${el.dataset.code}\nQuand tu achètes quelque chose, marque-le comme acheté pour éviter les doublons. Merci ! Will & Line`;
+    try { await navigator.clipboard.writeText(msg); toast("Message d'invitation copié"); }
+    catch { openSheet(`<h2>Message d'invitation</h2><textarea class="input" id="inviteMsg" style="min-height:140px">${esc(msg)}</textarea><button class="btn dark block" data-act="close">Fermer</button>`, (s) => s.querySelector("textarea").select()); }
+  }
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+
+/* ---------- Démarrage ---------- */
+(async function boot() {
+  try {
+    S.api = FIREBASE_CONFIG.apiKey ? await createFirebaseBackend(FIREBASE_CONFIG) : createDemoBackend();
+  } catch (e) {
+    console.error(e);
+    app.innerHTML = `<div class="card gate"><p class="error">Impossible de charger la base de données. Vérifie ta connexion internet puis recharge la page.</p></div>`;
+    return;
+  }
+  $("#demoBanner").hidden = S.api.mode !== "demo";
+  S.api.onAuth((me) => {
+    const prev = S.me?.uid;
+    S.me = me;
+    if (me && (me.role === "guest" || me.role === "admin")) { if (prev !== me.uid || !S.unsubs.length) startSubs(); }
+    else stopSubs();
+    render();
+  });
+})();
+</script>
+</body>
+</html>
